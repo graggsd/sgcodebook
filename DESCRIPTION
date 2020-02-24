@@ -1,0 +1,20 @@
+Package: sgcodebook
+Title: Recodes Categorical Values in a Dataset Using a Codebook
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Stephen",
+           family = "Gragg",
+           role = c("aut", "cre"),
+           email = "graggsd@gmail")
+Description: This package is designed to aid in data analysis workflows. 
+    Specifically, its intent is to aid with recoding categorical values in
+    a dataset to ones that are more human-readable and/or appropriate for 
+    analysis. It encourages the use of a user-generated codebook to assist 
+    in documenting critical parts of the analysis in a way that is friendly 
+    to collaborators, who are frequently non-R users.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 2.1.0)
+RoxygenNote: 7.0.2
