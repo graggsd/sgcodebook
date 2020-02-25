@@ -89,7 +89,7 @@ check_cbvars_in_data <- function(data, cb, cb_var_col) {
 get_col_classes <- function(data, cb, cb_var_col) {
     cols <- unique(cb[, cb_var_col])
     if (length(cols) > 1) {
-        return(apply(data[, cols], 2, class))
+        return(sapply(data[, cols], class))
     } else {
         return(class(data[, cols]))
     }

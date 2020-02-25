@@ -28,7 +28,7 @@ recode <- function(x, from, to) {
     # ==========================================================
 
     # Arguments must be of the same class ----------------------
-    if (!(all.equal(class(x), class(from), class(to)))) {
+    if (length(unique(c(class(x), class(from), class(to)))) > 1) {
         stop(paste0("Arguments must all be of the same class"))
     }
 
