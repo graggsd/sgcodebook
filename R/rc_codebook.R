@@ -214,6 +214,9 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
         # Create a subset of the codebook that pertains only to one variable
         cb_sub <- cb[cb[, cb_var_col] == cb_var, ]
 
+        # Change class of column in dataset to character
+        data[, cb_var] <- as.character(data[, cb_var])
+
         if (is.null(cb_level_idx)) {
             data[, cb_var] <- recode(x = data[, cb_var],
                                      from = cb_sub[, cb_val_old],
