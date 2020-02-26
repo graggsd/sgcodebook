@@ -144,3 +144,8 @@ test_that("can combine values when generating factors", {
                        cb_level_idx = "cb_level_idx")
     expect_equal(out, expected_out)
 })
+
+
+### Check for NA values in x
+
+### Check for NA values in to
