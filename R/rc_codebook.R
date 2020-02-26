@@ -14,8 +14,8 @@ check_duplicated_mapping <- function(cb, cb_var_col, cb_val_old) {
 
 # Make sure there are no missing values within the codebook
 check_missing_in_cb <-
-    function(cb, cb_var_col, cb_val_old, cb_val_new) {
-        for (cb_column in c(cb_var_col, cb_val_old, cb_val_new)) {
+    function(cb, cb_var_col, cb_val_old) {
+        for (cb_column in c(cb_var_col, cb_val_old)) {
             if (anyNA(cb[, cb_column])) {
                 stop(
                     paste0(
@@ -49,7 +49,7 @@ check_args_in_cb <-
 audit_codebook <- function(cb, cb_var_col, cb_val_old, cb_val_new) {
 
     check_duplicated_mapping(cb, cb_var_col, cb_val_old)
-    check_missing_in_cb(cb, cb_var_col, cb_val_old, cb_val_new)
+    check_missing_in_cb(cb, cb_var_col, cb_val_old)
     check_args_in_cb(cb, cb_var_col, cb_val_old, cb_val_new)
 
 }
