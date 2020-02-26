@@ -146,15 +146,30 @@ test_that("can combine values when generating factors", {
 })
 
 test_that("works with factors and NA values in x", {
-    data <- data.frame(PID = 1:6,
-                       x = as.character(rep(1:3, 2)),
-                       y = as.character(rep(1:3, 2)),
-                       stringsAsFactors = FALSE)
     data[1, "x"] <- NA
     expected_out <- data.frame(
         PID = 1:6,
         x = factor(c(NA, "B", "C", "A", "B", "C"),
                    levels = c("A", "B", "C")),
+        y = factor(c("X", "Y", "Z", "X", "Y", "Z"),
+                   levels = c("X", "Y", "Z")),
+        stringsAsFactors = FALSE
+    )
+    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
+                       cb_level_idx = "cb_level_idx")
+    expect_equal(out, expected_out)
+})
+
+test_that("works with factors matching NA values in 'cb_val_new' and 'cb_level_idx'", {
+    cb <- data.frame(cb_var_col = c("x", "x", "x", "y", "y", "y"),
+                     cb_val_old = c("1", "2", "3", "1", "2", "3"),
+                     cb_val_new = c(NA, "B", "C", "X", "Y", "Z"),
+                     cb_level_idx = c(NA, 2, 3, 1, 2, 3),
+                     stringsAsFactors = FALSE)
+    expected_out <- data.frame(
+        PID = 1:6,
+        x = factor(c(NA, "B", "C", NA, "B", "C"),
+                   levels = c("B", "C")),
         y = factor(c("X", "Y", "Z", "X", "Y", "Z"),
                    levels = c("X", "Y", "Z")),
         stringsAsFactors = FALSE

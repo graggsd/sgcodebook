@@ -82,6 +82,9 @@ check_cbvars_in_data <- function(data, cb, cb_var_col) {
 
 # Class handling -------------------------------------------------------------
 
+# This is all probably obsolete at this point now that I have added a step that
+# Converts everything to a character vector before making substitutions
+
 # Function will initially only work with strings and otherwise throw and error
 # Later, I will add functionality for other data types
 
