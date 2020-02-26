@@ -145,7 +145,22 @@ test_that("can combine values when generating factors", {
     expect_equal(out, expected_out)
 })
 
+test_that("works with factors and NA values in x", {
+    data <- data.frame(PID = 1:6,
+                       x = as.character(rep(1:3, 2)),
+                       y = as.character(rep(1:3, 2)),
+                       stringsAsFactors = FALSE)
+    data[1, "x"] <- NA
+    expected_out <- data.frame(
+        PID = 1:6,
+        x = factor(c(NA, "B", "C", "A", "B", "C"),
+                   levels = c("A", "B", "C")),
+        y = factor(c("X", "Y", "Z", "X", "Y", "Z"),
+                   levels = c("X", "Y", "Z")),
+        stringsAsFactors = FALSE
+    )
+    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
+                       cb_level_idx = "cb_level_idx")
+    expect_equal(out, expected_out)
+})
 
-### Check for NA values in x
-
-### Check for NA values in to
