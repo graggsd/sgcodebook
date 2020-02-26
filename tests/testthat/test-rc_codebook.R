@@ -102,6 +102,7 @@ out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
                    cb_level_idx = "cb_level_idx")
 
 test_that("works as expected with factors", {
+    # Test the baseline above
     expect_equal(out, expected_out)
 
     # reverse order of factors
@@ -125,5 +126,21 @@ test_that("works as expected with factors", {
 })
 
 test_that("can combine values when generating factors", {
+    # reverse order of factors
+    cb <- data.frame(cb_var_col = c("x", "x", "x", "y", "y", "y"),
+                     cb_val_old = c("1", "2", "3", "1", "2", "3"),
+                     cb_val_new = c("A", "B", "B", "X", "Y", "Z"),
+                     cb_level_idx = c(1, 2, 2, 3, 2, 1),
+                     stringsAsFactors = FALSE)
+    expected_out <- data.frame(
+        PID = 1:6,
+        x = factor(c("A", "B", "B", "A", "B", "B"),
+                   levels = c("A", "B")),
+        y = factor(c("X", "Y", "Z", "X", "Y", "Z"),
+                   levels = c("Z", "Y", "X")),
+        stringsAsFactors = FALSE
+    )
+    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
+                       cb_level_idx = "cb_level_idx")
     expect_equal(out, expected_out)
 })
