@@ -20,34 +20,38 @@
 rc_factor <- function(x, from, to, level_idx = NULL) {
 
     # Check for NA values in from -------------------------------------
-    # may change in future
     if(any(is.na(from))) {
         stop("Function currently does not support NA values in argument 'from'")
     }
-
     # Check non-unique mapping ----------------------------------------
     if(any(duplicated(from))) {
         stop("Function does not accept duplicated values in 'from'")
     }
-    if(anyDuplicated(level_idx[!duplicated(to)])) {
-        stop("'level_idx' must be unique for each unique value of 'to'")
-    }
 
-    if (is.null(level_idx) & length(from) != length(to)) {
-        stop("The length of 'from' must equal the length of 'to'")
-    } else if(!is.null(level_idx) &
-              !all.equal(length(from), length(to), length(level_idx))) {
-        stop("The lengths of 'from', 'to', and 'level_idx must be equal")
-    }
-
-    if (!is.null(level_idx) & !is.numeric(level_idx)) {
-        stop("level_idx must be of class numeric")
-    }
-
-    if (any(!(x %in% from))) {
+    if (any(!(x %in% from) & !is.na(x))) {
         stop("All values of 'x' must be contained in 'from'")
     }
 
+    if (length(from) != length(to)) {
+        stop("The length of 'from' must equal the length of 'to'")
+    }
+
+    if (!is.null(level_idx)) {
+
+        if (length(unique(c(length(from), length(to), length(level_idx)))) > 1) {
+            stop("The lengths of 'from', 'to', and 'level_idx must be equal")
+        }
+
+        if(anyDuplicated(level_idx[!duplicated(to)])) {
+            stop("'level_idx' must be unique for each unique value of 'to'")
+        }
+
+        if(!is.numeric(level_idx)) {
+            stop("level_idx must be of class numeric")
+        }
+    }
+
+    # To avoid self-refrencing and creating unexpected behavior
     new_x <- x
 
     for (i in 1:length(from)) {
@@ -56,6 +60,13 @@ rc_factor <- function(x, from, to, level_idx = NULL) {
     if (is.null(level_idx)) {
         new_x <- factor(new_x, levels = unique(to))
     } else {
+        # Any NA values in to must match the position of those in level_idx
+        stopifnot(all(is.na(to) == is.na(level_idx)))
+
+        # Remove any NA values before determining level order
+        level_idx <- level_idx[!is.na(level_idx)]
+        to <- to[!is.na(to)]
+
         idx <- order(level_idx)
         new_x <- factor(new_x, levels = unique(to[idx]))
     }
