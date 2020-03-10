@@ -52,3 +52,17 @@ test_that("handles NA values in 'to'", {
     out <- c("1", "1", NA, NA)
     expect_equal(recode(x, from, to), out)
 })
+
+# If values in x not in from ----------------------------------------
+
+test_that("responds appropriately when values in x are not in from", {
+    t1 <- letters[1:10]
+    t1[1] <- "A"
+    expect_warning(recode(t1, letters, 1:length(letters)))
+    expect_equal(recode(t1, letters, 1:length(letters),
+                        default_NA = TRUE, warn = FALSE),
+                 c(NA, as.character(2:10)))
+    expect_equal(recode(t1, letters, 1:length(letters),
+                        default_NA = FALSE, warn = FALSE),
+                 c("A", as.character(2:10)))
+})

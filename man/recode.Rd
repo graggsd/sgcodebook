@@ -4,7 +4,7 @@
 \alias{recode}
 \title{Recodes exact matches in a character string}
 \usage{
-recode(x, from, to)
+recode(x, from, to, warn = TRUE, default_NA = FALSE)
 }
 \arguments{
 \item{x}{A vector containing values that will be recoded based on
@@ -15,6 +15,12 @@ be recoded}
 
 \item{to}{A vector containing the corresponding value (or values) that
 \code{from} will be converted to}
+
+\item{warn}{If 'TRUE', a warning will be generated when values in 'x'
+are not contained in 'from}
+
+\item{default_NA}{If 'TRUE', \code{recode} will convert values from \code{x}
+not in \code{from} to \code{NA}}
 }
 \value{
 A character vector, derived from \code{x}, with 0 or more values

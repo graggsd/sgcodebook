@@ -19,6 +19,10 @@
 #' be recoded
 #' @param to A vector containing the corresponding value (or values) that
 #' \code{from} will be converted to
+#' @param warn If 'TRUE', a warning will be generated when values in 'x'
+#' are not contained in 'from
+#' @param default_NA If 'TRUE', \code{recode} will convert values from \code{x}
+#' not in \code{from} to \code{NA}
 #' @return A character vector, derived from \code{x}, with 0 or more values
 #' substituted for new ones
 #' @export
@@ -27,7 +31,7 @@
 #' from <- as.character(1:10)
 #' to <- letters[1:10]
 #' recode(x, from, to)
-recode <- function(x, from, to, warn = TRUE) {
+recode <- function(x, from, to, warn = TRUE, default_NA = FALSE) {
 
     # Input coercion ----------------------------------------
     x <- as.character(x)
@@ -58,14 +62,24 @@ recode <- function(x, from, to, warn = TRUE) {
              .Call = FALSE)
     }
 
-    if (!all(x %in% from | is.na(x)) & warn) {
-        warning(
-            paste0("The following values in 'x' are not contained",
-                   " in 'from':",
-                   paste(x[which(!(x %in% from | is.na(x)))],
-                         collapse = "; ")
+    # Set index for values in x, not contained in from, to NA
+    excl_idx <- !(x %in% from | is.na(x))
+
+    if (sum(excl_idx) > 0) {
+        # Identify values in x, not contained in from
+        if (warn) {
+            warning(
+                paste0("The following values in 'x' are not contained",
+                       " in 'from':",
+                       paste(x[excl_idx],
+                             collapse = "; ")
+                )
             )
-        )
+        }
+        # Set values in x, not contained in from, to NA
+        if (default_NA) {
+            x[excl_idx] <- NA
+        }
     }
 
     # ==========================================================
