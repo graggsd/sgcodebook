@@ -58,9 +58,9 @@ audit_codebook <- function(cb, cb_var_col, cb_val_old, cb_val_new) {
 check_args <- function(data, cb, cb_var_col, cb_val_old, cb_val_new) {
     stopifnot(is.data.frame(data))
     stopifnot(is.data.frame(cb))
-    stopifnot(is.character(cb_var_col), length(cb_var_col) == 1)
-    stopifnot(is.character(cb_val_old), length(cb_val_old) == 1)
-    stopifnot(is.character(cb_val_new), length(cb_val_new) == 1)
+    stopifnot(length(cb_var_col) == 1)
+    stopifnot(length(cb_val_old) == 1)
+    stopifnot(length(cb_val_new) == 1)
 }
 
 # Checks that all variables listed in the codebook are
