@@ -7,18 +7,20 @@
 rc_factor(x, from, to, level_idx = NULL)
 }
 \arguments{
-\item{x}{character vector that will be recoded and turned into a factor}
+\item{x}{vector that will be recoded and turned into a factor}
 
-\item{from}{character vector containing each unique value in \code{x}}
+\item{from}{vector containing all unique values in \code{x}}
 
-\item{to}{character vector containing new values that will be used
-as a substitute for values in \code{from}}
+\item{to}{vector containing values that will replace those in \code{from} -
+should be ordered in a manner so that each value in \code{to} occurs in this
+vector as the corresponding value in \code{from}}
 
-\item{level_idx}{The order in which \code{to} will be incorporated into the
-new factor}
+\item{level_idx}{vector specifying the sequence of levels in
+\code{rc_factor}'s output - position of each value should be indexed to
+corresponding value in \code{to} and \code{from}.}
 }
 \value{
-A factor
+A vector or class \code{factor}
 }
 \description{
 Recodes values of \code{x} based on pairs of values in \code{from} and

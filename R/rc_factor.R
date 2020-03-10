@@ -4,13 +4,15 @@
 #' \code{to}, outputting a factor. Optionally allows the ordering of factor
 #' levels based on \code{level_idx}.
 #'
-#' @param x character vector that will be recoded and turned into a factor
-#' @param from character vector containing each unique value in \code{x}
-#' @param to character vector containing new values that will be used
-#' as a substitute for values in \code{from}
-#' @param level_idx The order in which \code{to} will be incorporated into the
-#' new factor
-#' @return A factor
+#' @param x vector that will be recoded and turned into a factor
+#' @param from vector containing all unique values in \code{x}
+#' @param to vector containing values that will replace those in \code{from} -
+#' should be ordered in a manner so that each value in \code{to} occurs in this
+#' vector as the corresponding value in \code{from}
+#' @param level_idx vector specifying the sequence of levels in
+#' \code{rc_factor}'s output - position of each value should be indexed to
+#' corresponding value in \code{to} and \code{from}.
+#' @return A vector or class \code{factor}
 #' @examples
 #' x <- as.character(1:10)
 #' from <- as.character(1:10)
