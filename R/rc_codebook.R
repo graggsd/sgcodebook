@@ -54,26 +54,6 @@ audit_codebook <- function(cb, cb_var_col, cb_val_old, cb_val_new) {
 
 # Helper functions to check cb and data expectations --------------------------
 
-# Check that arguments meet expectations of function
-check_args <- function(data, cb, cb_var_col, cb_val_old, cb_val_new) {
-    stopifnot(is.data.frame(data))
-    stopifnot(is.data.frame(cb))
-    stopifnot(length(cb_var_col) == 1)
-    stopifnot(length(cb_val_old) == 1)
-    stopifnot(length(cb_val_new) == 1)
-}
-
-# Checks that all variables listed in the codebook are
-# contained as columns within the dataset
-check_cbvars_in_data <- function(data, cb, cb_var_col) {
-    vars_in_codebook <- unique(cb[, cb_var_col])
-    idx <- vars_in_codebook %in% colnames(data)
-    if (!all(idx)) {
-        warning(paste0("The following variables from the codebook were not ",
-                       "contained as columns in in the dataset: ",
-                       paste(vars_in_codebook[!idx], collapse = ", ")))
-    }
-}
 
 # Check that column classes are currently supported by the package
 
@@ -191,7 +171,7 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
     # ==========================================================
     cb_var_col <- as.character(cb_var_col)
     cb_val_old <- as.character(cb_val_old)
-    cb_val_new <- ascharacter(cb_val_new)
+    cb_val_new <- as.character(cb_val_new)
     if (!is.null(cb_level_idx)) cb_level_idx <- as.character(cb_level_idx)
 
     # ----------------------------------------------------------------
@@ -199,8 +179,12 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
     # error message that will help the user fix the problem
     # ----------------------------------------------------------------
 
-    # Checks that arguments are of appropriate class and length
-    check_args(data, cb, cb_var_col, cb_val_old, cb_val_new)
+    # Check that arguments are of appropriate class and length
+    stopifnot(is.data.frame(data))
+    stopifnot(is.data.frame(cb))
+    stopifnot(length(cb_var_col) == 1)
+    stopifnot(length(cb_val_old) == 1)
+    stopifnot(length(cb_val_new) == 1)
 
     # Checks that 1) each new old value in the codebook is mapped to exactly
     # one new value, 2) there are no missing values in the codebook, 3)
@@ -208,12 +192,20 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
     # columns within the codebook
     audit_codebook(cb, cb_var_col, cb_val_old, cb_val_new)
 
-    # Sends a warning if variables specified in the codebook are not
-    # contained within the dataset
-    check_cbvars_in_data(data, cb, cb_var_col)
-
     # Check if column classes are currently supported by the package
     check_col_classes_supported(data, cb, cb_var_col)
+
+    # Check that vars in codebooks are contained within the dataset
+    # and remove those that aren't
+    vars_in_codebook <- cb[, cb_var_col]
+    idx <- vars_in_codebook %in% colnames(data)
+    if (!all(idx)) {
+        warning(paste0("The following variables from the codebook were not ",
+                       "contained as columns in in the dataset: ",
+                       paste(unique(vars_in_codebook[!idx]), collapse = ", ")))
+
+        cb <- cb[idx, ]
+    }
 
     # ===============================================================
 
