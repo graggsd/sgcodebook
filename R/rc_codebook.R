@@ -52,30 +52,6 @@ audit_codebook <- function(cb, cb_var_col, cb_val_old, cb_val_new) {
     check_args_in_cb(cb, cb_var_col, cb_val_old, cb_val_new)
 }
 
-# Helper functions to check cb and data expectations --------------------------
-
-
-# Check that column classes are currently supported by the package
-
-
-# Class handling -------------------------------------------------------------
-
-# This is all probably obsolete at this point now that I have added a step that
-# Converts everything to a character vector before making substitutions
-
-# Function will initially only work with strings and otherwise throw and error
-# Later, I will add functionality for other data types
-
-# Get the class of all columns
-get_col_classes <- function(data, cb, cb_var_col) {
-    cols <- unique(cb[, cb_var_col])
-    if (length(cols) > 1) {
-        return(sapply(data[, cols], class))
-    } else {
-        return(class(data[, cols]))
-    }
-}
-
 # Recode function --------------------------------------------------------
 
 # Uses a codebook to rename values within the dataset
@@ -177,16 +153,11 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
     vars_in_codebook <- cb[, cb_var_col]
     idx <- vars_in_codebook %in% colnames(data)
     if (!all(idx)) {
-        warning(paste0("The following variables from the codebook were not ",
-                       "contained as columns in in the dataset: ",
+        warning(paste0("The following values from the column 'cb_var_col' in ",
+                       "'cb' were not contained as columns in 'data': ",
                        paste(unique(vars_in_codebook[!idx]), collapse = ", ")))
 
         cb <- cb[idx, ]
-    }
-
-    # convert cols in data to character ----------------------------------------
-    for (var in unique(cb[, cb_var_col])) {
-        data[, var] <- as.character(data[, var])
     }
 
     # ===============================================================
@@ -199,6 +170,17 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
 
         # Change class of column in dataset to character
         data[, cb_var] <- as.character(data[, cb_var])
+
+        # Give warning if any values in data are not contained as values in
+        # the 'from' column of cb_sub
+        idx <- (data[, cb_var] %in% cb_sub[, cb_val_old]) |
+            is.na(data[, cb_var])
+        if (!all(idx)) {
+            warning(paste0("The following values within column '", cb_var,
+                           "' of data were not contained in the 'cb_val_old' ",
+                           "column of 'cb': ",
+                           paste(unique(data[!idx, cb_var]), collapse = "; ")))
+        }
 
         if (is.null(cb_level_idx)) {
             data[, cb_var] <- recode(x = data[, cb_var],
@@ -217,15 +199,4 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
     }
     return(data)
 }
-
-# Handle classes appropriately
-# Deal with missingness
-# Deal with factors appropriately
-# Make appropriate and predictable conversions, while erroring out to prevent
-# unexpected consequences
-# Provide ways to specify the new classes for columns
-# Generate warning messages when no adequate solution to convert a column class
-# are available
-# Create a new function to quickly go through two vectors and change values
-# from one to the other
 

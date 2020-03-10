@@ -23,9 +23,8 @@ out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new")
 
 # ============================================================
 
-
 # ----------------------------------------------------------
-# Character values
+# Output character
 # ----------------------------------------------------------
 
 test_that("basic functionality intact", {
@@ -62,7 +61,7 @@ test_that("assigns NA values when cb_val_new is missing", {
     expect_equal(out, expected_out)
 })
 
-test_that("works with character values when combining variables", {
+test_that("works when combining variables", {
     cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
                      cb_val_old = c("0", "1", "0", "1"),
                      cb_val_new = c("no", "no", "no", "yes"),
@@ -78,7 +77,7 @@ test_that("works with character values when combining variables", {
 })
 
 # ----------------------------------------------------------
-# Factors
+# Output Factor
 # ----------------------------------------------------------
 
 data <- data.frame(PID = 1:6,
@@ -177,5 +176,58 @@ test_that("works with factors matching NA values in 'cb_val_new' and 'cb_level_i
     out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
                        cb_level_idx = "cb_level_idx")
     expect_equal(out, expected_out)
+})
+
+# ==========================================================
+# Errors and warnings
+# ==========================================================
+
+cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
+                 cb_val_old = c("0", "1", "0", "1"),
+                 cb_val_new = c("no", "yes", "no", "yes"),
+                 stringsAsFactors = FALSE)
+
+data <- data.frame(PID = 1:4,
+                   x = c("0", "1", "1", "0"),
+                   y = c("1", "1", "0", "0"),
+                   stringsAsFactors = FALSE)
+
+expected_out <- data.frame(
+    PID = 1:4,
+    x = c("no", "yes", "yes", "no"),
+    y = c("yes", "yes", "no", "no"),
+    stringsAsFactors = FALSE
+)
+
+test_that("identifies when there are unaccounted values in data", {
+    dat <- data
+    dat[1, "x"] <- "2"
+    exo <- expected_out
+    exo[1, "x"] <- "2"
+    expect_equal(
+        suppressWarnings(
+            rc_codebook(dat, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+        ),
+        exo
+    )
+    expect_warning(
+        rc_codebook(dat, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+        )
+
+})
+
+test_that("identifies variables in cb that are not contained in data", {
+
+    cb_2 <- rbind(cb, c("z", "0", "no"))
+    expect_equal(
+        suppressWarnings(
+            rc_codebook(data, cb_2, "cb_var_col", "cb_val_old", "cb_val_new")
+        ),
+        expected_out
+    )
+    expect_warning(
+        rc_codebook(data, cb_2, "cb_var_col", "cb_val_old", "cb_val_new")
+    )
+
 })
 
