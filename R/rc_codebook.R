@@ -76,26 +76,6 @@ get_col_classes <- function(data, cb, cb_var_col) {
     }
 }
 
-# Check if column classes are accepted
-check_col_classes_supported <- function(data, cb, cb_var_col) {
-
-    col_classes <- get_col_classes(data, cb, cb_var_col)
-
-    # Character vector of data classes this package can currently handle
-    # Within columns from data
-    can_handle <- c("character")
-    if (any(!(col_classes %in% can_handle))) {
-        stop(
-            paste0(
-                "To use this function, columns in the 'data.frame'",
-                " used in the 'data' argument that you wish to decode ",
-                "must be of the the following classes: ",
-                paste(can_handle, collapse = ", ")
-            )
-        )
-    }
-}
-
 # Recode function --------------------------------------------------------
 
 # Uses a codebook to rename values within the dataset
@@ -192,9 +172,6 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
     # columns within the codebook
     audit_codebook(cb, cb_var_col, cb_val_old, cb_val_new)
 
-    # Check if column classes are currently supported by the package
-    check_col_classes_supported(data, cb, cb_var_col)
-
     # Check that vars in codebooks are contained within the dataset
     # and remove those that aren't
     vars_in_codebook <- cb[, cb_var_col]
@@ -205,6 +182,11 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
                        paste(unique(vars_in_codebook[!idx]), collapse = ", ")))
 
         cb <- cb[idx, ]
+    }
+
+    # convert cols in data to character ----------------------------------------
+    for (var in unique(cb[, cb_var_col])) {
+        data[, var] <- as.character(data[, var])
     }
 
     # ===============================================================
