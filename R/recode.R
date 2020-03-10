@@ -1,18 +1,24 @@
 #' Recodes exact matches in a character string
 #'
 #' Finds values in \code{x} that are equivalent to values in
-#' \code{from} and substitutes them with corresponding values in \code{to}. If only
-#' a single value is included in \code{to}, then all values in \code{x} matching
+#' \code{from} and substitutes them with corresponding values in \code{to}.
+#'
+#' If only a single value is included in \code{to}, then all values in
+#' \code{x} matching
 #' values in \code{from} will be changed to the single value in \code{to}.
 #' Otherwise, the lengths of \code{from} and \code{to} must be equal, and there
 #' can be no duplicated values in \code{from}.
 #'
-#' @param x A character vector containing values that will be recoded based on
+#' Note that when anticipating output of \code{recode}, this function
+#' automatically converts all input arguments to character vectors in the
+#' first step.
+#'
+#' @param x A vector containing values that will be recoded based on
 #' \code{from} and \code{to}
-#' @param from A character vector containing the values within \code{x} that will
+#' @param from A vector containing the values within \code{x} that will
 #' be recoded
-#' @param to The corresponding value (or values) that \code{from} will be
-#' converted to
+#' @param to A vector containing the corresponding value (or values) that
+#' \code{from} will be converted to
 #' @return A character vector, derived from \code{x}, with 0 or more values
 #' substituted for new ones
 #' @export
@@ -23,37 +29,33 @@
 #' recode(x, from, to)
 recode <- function(x, from, to) {
 
+    # Input coercion ----------------------------------------
+    x <- as.character(x)
+    from <- as.character(from)
+    to <- as.character(to)
+
     # ==========================================================
     # Argument checking
     # ==========================================================
 
-    # Arguments must be of the same class ----------------------
-    if (length(unique(c(class(x), class(from), class(to)))) > 1) {
-        stop(paste0("Arguments must all be of the same class"))
-    }
-
-    # Restrict argument class ----------------------
-    allowed_classes <- c("character")
-    if (!all(c(class(x), class(from), class(to)) %in% allowed_classes)) {
-        stop(paste0("Arguments must be one of the following classes: ",
-                    paste(allowed_classes, collapse = ", ")))
-    }
-
     # Make sure from and to lengths indexable ----------------------
     if(!(length(from) == length(to) | length(to) == 1)) {
         stop(paste0("The length of 'from' must be equal to the length of 'to' ",
-                    "OR 'to' must be of length 1"))
+                    "OR 'to' must be of length 1"),
+             .Call = FALSE)
     }
 
     # Check for NA values in from -------------------------------------
     # may change in future
     if(any(is.na(from))) {
-        stop("Function currently does not support NA values in argument 'from'")
+        stop("Function currently does not support NA values in argument 'from'",
+             .Call = FALSE)
     }
 
     # Check non-unique mapping ----------------------------------------
     if(any(duplicated(from))) {
-        stop("Function does not accept duplicated values in 'from'")
+        stop("Function does not accept duplicated values in 'from'",
+             .Call = FALSE)
     }
 
     # ==========================================================
@@ -75,12 +77,6 @@ recode <- function(x, from, to) {
             new_x[x == from[i]] <- to
         }
     }
-
-    # Functonality may be implemented later
-    # if (class(new_x) != class(x)) {
-    #     warning(paste0("Function 'recode' coherced class change from ",
-    #                    class(x), " to ", class(new_x)))
-    # }
 
     return(new_x)
 }

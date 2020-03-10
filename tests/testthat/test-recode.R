@@ -29,6 +29,13 @@ test_that("works with 'to' and 'from' of length 1", {
                  c("b", "x"))
 })
 
+test_that("works with coercion", {
+    expect_equal(recode(x = rep(1:10),
+                        from = as.character(1:10),
+                        to = letters[1:10]),
+                 letters[1:10])
+})
+
 # NA value handling ------------------------------------------------------------
 test_that("handles NA values in 'x'", {
     x <- c("a", NA, "b", "b")
@@ -37,16 +44,6 @@ test_that("handles NA values in 'x'", {
     out <- c("1", NA, "2", "2")
     expect_equal(recode(x, from, to), out)
 })
-
-# Not currently supported, but may add functionality later
-
-# test_that("handles NA values in 'from'", {
-#     x <- c("a", NA, "b", "b")
-#     from <- c("a", NA, "b")
-#     to <- c("1", "1", "2")
-#     out <- c("1", "1", "2", "2")
-#     expect_equal(recode(x, from, to), out)
-# })
 
 test_that("handles NA values in 'to'", {
     x <- c("a", "a", "b", "b")

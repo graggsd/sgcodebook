@@ -7,14 +7,14 @@
 recode(x, from, to)
 }
 \arguments{
-\item{x}{A character vector containing values that will be recoded based on
+\item{x}{A vector containing values that will be recoded based on
 \code{from} and \code{to}}
 
-\item{from}{A character vector containing the values within \code{x} that will
+\item{from}{A vector containing the values within \code{x} that will
 be recoded}
 
-\item{to}{The corresponding value (or values) that \code{from} will be
-converted to}
+\item{to}{A vector containing the corresponding value (or values) that
+\code{from} will be converted to}
 }
 \value{
 A character vector, derived from \code{x}, with 0 or more values
@@ -22,11 +22,18 @@ substituted for new ones
 }
 \description{
 Finds values in \code{x} that are equivalent to values in
-\code{from} and substitutes them with corresponding values in \code{to}. If only
-a single value is included in \code{to}, then all values in \code{x} matching
+\code{from} and substitutes them with corresponding values in \code{to}.
+}
+\details{
+If only a single value is included in \code{to}, then all values in
+\code{x} matching
 values in \code{from} will be changed to the single value in \code{to}.
 Otherwise, the lengths of \code{from} and \code{to} must be equal, and there
 can be no duplicated values in \code{from}.
+
+Note that when anticipating output of \code{recode}, this function
+automatically converts all input arguments to character vectors in the
+first step.
 }
 \examples{
 x <- as.character(1:10)
