@@ -19,22 +19,22 @@ within \code{data} that will be replaced,
 and one column, \code{cb_val_new}, corresponding to new values that will be
 used to replace the old.}
 
-\item{cb_var_col}{a character vector of length 1 corresponding to a column
-within \code{cb} containing variable names from \code{data}}
+\item{cb_var_col}{vector of length 1 containing the column name
+within \code{cb} housing variable names within \code{data}}
 
-\item{cb_val_old}{a character vector of length 1 corresponding to a column
-within \code{cb} containing old values within \code{data}}
+\item{cb_val_old}{vector of length 1 containing the column name
+within \code{cb} housing old values from \code{data}}
 
-\item{cb_val_new}{a character vector of length 1 corresponding to a column
-within \code{cb} containing values that will be used to substitute
-current values within \code{data}
-#'@param cb_level_idx a character vector of length 1 corresponding to a column
-within \code{cb} containing values that will be used to assign the order
+\item{cb_val_new}{vector of length 1 containing the column name
+within \code{cb} housing new values that will be used to substitute
+as substitutes for current values within \code{data}
+#'@param cb_level_idx vector of length 1 containing the column name
+within \code{cb} housing values that will be used to assign the order
 of factor levels within recoded values of \code{data}}
 }
 \value{
 A \code{data.frame} similar to \code{data}, except that
-values from some values will have been recoded based on \code{cb}
+specified values will have been recoded based on \code{cb}
 }
 \description{
 Function to recode values within columns of a dataset using a custom

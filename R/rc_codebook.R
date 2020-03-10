@@ -47,11 +47,9 @@ check_args_in_cb <-
 
 # Check codebook consistency
 audit_codebook <- function(cb, cb_var_col, cb_val_old, cb_val_new) {
-
     check_duplicated_mapping(cb, cb_var_col, cb_val_old)
     check_missing_in_cb(cb, cb_var_col, cb_val_old)
     check_args_in_cb(cb, cb_var_col, cb_val_old, cb_val_new)
-
 }
 
 # Helper functions to check cb and data expectations --------------------------
@@ -161,18 +159,18 @@ check_col_classes_supported <- function(data, cb, cb_var_col) {
 #'within \code{data} that will be replaced,
 #'and one column, \code{cb_val_new}, corresponding to new values that will be
 #'used to replace the old.
-#'@param cb_var_col a character vector of length 1 corresponding to a column
-#'within \code{cb} containing variable names from \code{data}
-#'@param cb_val_old a character vector of length 1 corresponding to a column
-#'within \code{cb} containing old values within \code{data}
-#'@param cb_val_new a character vector of length 1 corresponding to a column
-#'within \code{cb} containing values that will be used to substitute
-#'current values within \code{data}
-#'#'@param cb_level_idx a character vector of length 1 corresponding to a column
-#'within \code{cb} containing values that will be used to assign the order
+#'@param cb_var_col vector of length 1 containing the column name
+#'within \code{cb} housing variable names within \code{data}
+#'@param cb_val_old vector of length 1 containing the column name
+#'within \code{cb} housing old values from \code{data}
+#'@param cb_val_new vector of length 1 containing the column name
+#'within \code{cb} housing new values that will be used to substitute
+#'as substitutes for current values within \code{data}
+#'#'@param cb_level_idx vector of length 1 containing the column name
+#'within \code{cb} housing values that will be used to assign the order
 #'of factor levels within recoded values of \code{data}
 #'@return A \code{data.frame} similar to \code{data}, except that
-#'values from some values will have been recoded based on \code{cb}
+#'specified values will have been recoded based on \code{cb}
 #'@export
 #'@examples
 #'cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
@@ -187,6 +185,14 @@ check_col_classes_supported <- function(data, cb, cb_var_col) {
 #'out
 rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
                         cb_level_idx = NULL) {
+
+    # ==========================================================
+    # Convert arguments
+    # ==========================================================
+    cb_var_col <- as.character(cb_var_col)
+    cb_val_old <- as.character(cb_val_old)
+    cb_val_new <- ascharacter(cb_val_new)
+    if (!is.null(cb_level_idx)) cb_level_idx <- as.character(cb_level_idx)
 
     # ----------------------------------------------------------------
     # Check for problems in function setup and display an appropriate
