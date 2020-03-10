@@ -19,6 +19,13 @@
 #' recode(x, from, to, level_idx)
 rc_factor <- function(x, from, to, level_idx = NULL) {
 
+    # Convert some input arguments to character
+    x <- as.character(x)
+    from <- as.character(from)
+    to <- as.character(to)
+
+    lvl_idx_req <- "level_idx must be numeric or fully coercible character vector"
+
     # Check for NA values in from -------------------------------------
     if(any(is.na(from))) {
         stop("Function currently does not support NA values in argument 'from'")
@@ -29,7 +36,7 @@ rc_factor <- function(x, from, to, level_idx = NULL) {
     }
 
     if (any(!(x %in% from) & !is.na(x))) {
-        stop("All values of 'x' must be contained in 'from'")
+        stop("All non-missing values of 'x' must be contained in 'from'")
     }
 
     if (length(from) != length(to)) {
@@ -46,8 +53,16 @@ rc_factor <- function(x, from, to, level_idx = NULL) {
             stop("'level_idx' must be unique for each unique value of 'to'")
         }
 
-        if(!is.numeric(level_idx)) {
-            stop("level_idx must be of class numeric")
+        if(!is.numeric(level_idx) & !is.character(level_idx)) {
+            stop()
+        }
+
+        if(is.character(level_idx)) {
+            tryCatch(
+                level_idx <- as.numeric(level_idx),
+                warning = function(warn) stop(lvl_idx_req, .call = FALSE),
+                error = function(err) stop(lvl_idx_req, .call = FALSE)
+            )
         }
     }
 
