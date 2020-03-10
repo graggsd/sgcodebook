@@ -27,7 +27,7 @@
 #' from <- as.character(1:10)
 #' to <- letters[1:10]
 #' recode(x, from, to)
-recode <- function(x, from, to) {
+recode <- function(x, from, to, warn = TRUE) {
 
     # Input coercion ----------------------------------------
     x <- as.character(x)
@@ -56,6 +56,16 @@ recode <- function(x, from, to) {
     if(any(duplicated(from))) {
         stop("Function does not accept duplicated values in 'from'",
              .Call = FALSE)
+    }
+
+    if (!all(x %in% from | is.na(x)) & warn) {
+        warning(
+            paste0("The following values in 'x' are not contained",
+                   " in 'from':",
+                   paste(x[which(!(x %in% from | is.na(x)))],
+                         collapse = "; ")
+            )
+        )
     }
 
     # ==========================================================

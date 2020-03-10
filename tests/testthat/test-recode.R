@@ -25,7 +25,7 @@ test_that("works with 'x' of length 1", {
 })
 
 test_that("works with 'to' and 'from' of length 1", {
-    expect_equal(recode(x = c("a", "x"), from = "a", to = "b"),
+    expect_equal(recode(x = c("a", "x"), from = "a", to = "b", warn = FALSE),
                  c("b", "x"))
 })
 

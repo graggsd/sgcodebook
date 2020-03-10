@@ -185,11 +185,13 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
         if (is.null(cb_level_idx)) {
             data[, cb_var] <- recode(x = data[, cb_var],
                                      from = cb_sub[, cb_val_old],
-                                     to = cb_sub[, cb_val_new])
+                                     to = cb_sub[, cb_val_new],
+                                     warn = FALSE)
         } else if(all(is.na(cb_sub[, cb_level_idx]))) {
             data[, cb_var] <- recode(x = data[, cb_var],
                                      from = cb_sub[, cb_val_old],
-                                     to = cb_sub[, cb_val_new])
+                                     to = cb_sub[, cb_val_new],
+                                     warn = FALSE)
         } else {
             data[, cb_var] <- rc_factor(x = data[, cb_var],
                                         from = cb_sub[, cb_val_old],
