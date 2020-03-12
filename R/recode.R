@@ -71,7 +71,7 @@ recode <- function(x, from, to, warn = TRUE, default_NA = FALSE) {
             warning(
                 paste0("The following values in 'x' are not contained",
                        " in 'from':",
-                       paste(x[excl_idx],
+                       paste(unique(x[excl_idx]),
                              collapse = "; ")
                 )
             )
