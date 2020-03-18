@@ -208,7 +208,9 @@ rc_codebook <- function(data, codebook,
                 "three column names in 'codebook'\n"
             )
             m3 <-
-                paste(paste0("'", null_arg_names, "' = '", null_arg_names, "'"),
+                paste(paste0("'", null_arg_names, "' = '",
+                             colnames(codebook)[which(null_arg_idx)],
+                             "'"),
                       collapse = "; ")
             message(m2, m3)
             for (i in which(null_arg_idx)) {
