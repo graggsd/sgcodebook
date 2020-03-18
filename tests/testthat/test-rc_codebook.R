@@ -3,10 +3,13 @@ context("rc_codebook")
 # ----------------------------------------------------------
 # Some templates to work with
 # ----------------------------------------------------------
-codebook <- data.frame(variable = c("x", "x", "y", "y"),
-                 from = c("0", "1", "0", "1"),
-                 to = c("no", "yes", "no", "yes"),
-                 stringsAsFactors = FALSE)
+codebook <-
+    data.frame(
+        variable = c("x", "x", "y", "y"),
+        from = c("0", "1", "0", "1"),
+        to = c("no", "yes", "no", "yes"),
+        stringsAsFactors = FALSE
+    )
 
 data <- data.frame(PID = 1:4,
                    x = c("0", "1", "1", "0"),
@@ -22,6 +25,33 @@ expected_out <- data.frame(
 out <- rc_codebook(data, codebook, "variable", "from", "to")
 
 # ============================================================
+
+
+
+test_that("works when codebook column arguments are left NULL", {
+    expect_equal(
+        suppressMessages(rc_codebook(data, codebook)),
+        rc_codebook(data, codebook, "variable", "from", "to")
+    )
+    expect_equal(
+        suppressMessages(rc_codebook(data, codebook, "variable")),
+        rc_codebook(data, codebook, "variable", "from", "to")
+    )
+})
+
+test_that("defaults to first 3 columns when colnames are non-standard", {
+    codebook_2 <-
+        data.frame(
+            col1 = c("x", "x", "y", "y"),
+            col2 = c("0", "1", "0", "1"),
+            col3 = c("no", "yes", "no", "yes"),
+            stringsAsFactors = FALSE
+        )
+        expect_equal(
+            suppressMessages(rc_codebook(data, codebook_2)),
+            suppressMessages(rc_codebook(data, codebook))
+        )
+})
 
 # ----------------------------------------------------------
 # Output character
@@ -230,4 +260,5 @@ test_that("identifies variables in codebook that are not contained in data", {
     )
 
 })
+
 

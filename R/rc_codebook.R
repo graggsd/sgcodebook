@@ -119,8 +119,129 @@ audit_codebook <- function(codebook, variable, from, to) {
 #'                   stringsAsFactors = FALSE)
 #'out <- rc_codebook(data, codebook, "variable", "from", "to")
 #'out
-rc_codebook <- function(data, codebook, variable, from, to,
+rc_codebook <- function(data, codebook,
+                        variable = NULL, from = NULL, to = NULL,
                         factor_levels = NULL) {
+
+    # ==========================================================
+    # Find default columns in codebook
+    # ==========================================================
+    argument_names <- c("variable", "from", "to")
+    arg_list <- list(variable, from, to)
+    names(arg_list) <- argument_names
+
+    # Throw error if not NULL or length 1
+    if (any(lapply(arg_list, length) > 1)) {
+        er <-
+            paste0(
+                "The following arguments must be of length 1 or NULL:\n",
+                "'variable', 'from', and 'to'."
+            )
+        stop(er)
+    }
+
+    # Throw error if not all of class character, numeric, or NULL
+    arg_classes <- lapply(arg_list, class)
+    correct_class_idx <-
+        arg_classes %in% c("character", "numeric", "NULL")
+
+    if (!all(correct_class_idx)) {
+        b_args <- arg_classes[!correct_class_idx]
+        report <-
+            paste(paste0("'", names(b_args), "' was class '", b_args, "'"),
+                  collapse = "\n")
+        er <-
+            paste0(
+                "The arguments 'variable', 'from', and 'to' should be of\n",
+                "class: numeric, character, or NULL.\n",
+                report
+            )
+        stop(er)
+    }
+
+    # Handle null arguments
+    null_arg_idx <- unlist(lapply(arg_list, is.null))
+    null_arg_names <- names(null_arg_idx)[null_arg_idx]
+
+    # Throw error if assigned argument does not exist as a column in codebook
+    not_null_arg_names <- unlist(arg_list)
+
+    if (!(all(not_null_arg_names %in% colnames(codebook)))) {
+        er <-
+            paste0(
+                "If the arguments 'variable', 'from', or 'to' are assigned\n",
+                "a value, that value must be contained as a column name in\n",
+                "codebook."
+            )
+        stop(er)
+    }
+
+    if (any(null_arg_idx)) {
+        m1 <- paste0("The following arguments were left NULL: ",
+                     paste(paste0("'", null_arg_names, "'"), collapse = "; "),
+                     "\n")
+        message(m1)
+
+        # If all of the default codebook column names ('variable', 'from', and 'to')
+        # exist as column names in codebook, then default to these names
+        # Else, the argument 'variable' will assume the value of the
+        # first column in codebook, 'from' will take on the second column name
+        # and 'to' will take on the third
+        if (all(null_arg_names %in% colnames(codebook))) {
+            m2 <- paste0(
+                "Because each of the aforementioned arguments ",
+                "had a matching column name in 'codebook', \nthe value for ",
+                "each argument will be assigned as follows:\n"
+            )
+            m3 <-
+                paste(paste0("'", null_arg_names, "' = '", null_arg_names, "'"),
+                      collapse = "; ")
+            message(m2, m3)
+            for (null_arg in null_arg_names) {
+                arg_list[null_arg] <- null_arg
+            }
+        } else {
+            m2 <- paste0(
+                "Because one or more of the aforementioned arguments ",
+                "had no matching column name\nin 'codebook', the value for ",
+                "each argument will be assigned according to the first\n",
+                "three column names in 'codebook'\n"
+            )
+            m3 <-
+                paste(paste0("'", null_arg_names, "' = '", null_arg_names, "'"),
+                      collapse = "; ")
+            message(m2, m3)
+            for (i in which(null_arg_idx)) {
+                arg_list[i] <- colnames(codebook)[i]
+            }
+        }
+    }
+
+    # Throw error if there are duplicated values
+    if (any(duplicated(unlist(arg_list)))) {
+        m1 <-
+            paste0(
+                "There were duplicated values found among the arguments ",
+                "'variable', 'from',\n and 'to'. Each of these arguments ",
+                "must be assigned a unique value and represent a\n column",
+                " name in 'codebook'. \n\nThe arguments were assigned as follows",
+                ":\n"
+            )
+        m2 <-
+            paste(paste0("'", names(arg_list), "' = '", unlist(arg_list), "'"),
+                  collapse = "; ")
+        m3 <-
+            paste0(
+                "Please change the values assigned to 'variable', 'from',",
+                " and 'to' so that each\n specifies a unique column in ",
+                "'codebook'."
+            )
+        stop(m1, m2, "\n\n", m3)
+    }
+
+    variable <- arg_list["variable"]
+    from <- arg_list["from"]
+    to  <- arg_list["to"]
 
     # ==========================================================
     # Convert arguments

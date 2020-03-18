@@ -4,7 +4,14 @@
 \alias{rc_codebook}
 \title{Recode values within a wide dataset}
 \usage{
-rc_codebook(data, codebook, variable, from, to, factor_levels = NULL)
+rc_codebook(
+  data,
+  codebook,
+  variable = NULL,
+  from = NULL,
+  to = NULL,
+  factor_levels = NULL
+)
 }
 \arguments{
 \item{data}{a \code{data.frame} in wide-format such that each row
