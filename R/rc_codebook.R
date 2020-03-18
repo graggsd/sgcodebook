@@ -1,11 +1,11 @@
 # Codebook certification -----------------------------------------------------
 
 # Make sure that within each category, there are no duplicated "old" values
-check_duplicated_mapping <- function(cb, cb_var_col, cb_val_old) {
-    var_names <- unique(cb[, cb_var_col])
+check_duplicated_mapping <- function(codebook, variable, from) {
+    var_names <- unique(codebook[, variable])
     for (var_name in var_names) {
-        idx <- cb[, cb_var_col] == var_name
-        if (anyDuplicated(cb[idx, cb_val_old])) {
+        idx <- codebook[, variable] == var_name
+        if (anyDuplicated(codebook[idx, from])) {
             stop(paste0("There are duplicated 'old' values for the following",
                         " variable: ", var_name))
         }
@@ -13,15 +13,15 @@ check_duplicated_mapping <- function(cb, cb_var_col, cb_val_old) {
 }
 
 # Make sure there are no missing values within the codebook
-check_missing_in_cb <-
-    function(cb, cb_var_col, cb_val_old) {
-        for (cb_column in c(cb_var_col, cb_val_old)) {
-            if (anyNA(cb[, cb_column])) {
+check_missing_in_codebook <-
+    function(codebook, variable, from) {
+        for (codebook_column in c(variable, from)) {
+            if (anyNA(codebook[, codebook_column])) {
                 stop(
                     paste0(
                         "The following column in the codebook contained NA ",
                         "values: ",
-                        cb_column
+                        codebook_column
                     )
                 )
             }
@@ -30,10 +30,10 @@ check_missing_in_cb <-
 
 
 # Check that input arguments are all contained as columns within the codebook
-check_args_in_cb <-
-    function(cb, cb_var_col, cb_val_old, cb_val_new) {
-        args <- c(cb_var_col, cb_val_old, cb_val_new)
-        missing_idx <- !(args %in% colnames(cb))
+check_args_in_codebook <-
+    function(codebook, variable, from, to) {
+        args <- c(variable, from, to)
+        missing_idx <- !(args %in% colnames(codebook))
         if (any(missing_idx)) {
             stop(
                 paste0(
@@ -46,10 +46,10 @@ check_args_in_cb <-
     }
 
 # Check codebook consistency
-audit_codebook <- function(cb, cb_var_col, cb_val_old, cb_val_new) {
-    check_duplicated_mapping(cb, cb_var_col, cb_val_old)
-    check_missing_in_cb(cb, cb_var_col, cb_val_old)
-    check_args_in_cb(cb, cb_var_col, cb_val_old, cb_val_new)
+audit_codebook <- function(codebook, variable, from, to) {
+    check_duplicated_mapping(codebook, variable, from)
+    check_missing_in_codebook(codebook, variable, from)
+    check_args_in_codebook(codebook, variable, from, to)
 }
 
 # Recode function --------------------------------------------------------
@@ -73,62 +73,62 @@ audit_codebook <- function(cb, cb_var_col, cb_val_old, cb_val_new) {
 #' Preliminary steps include importing the dataset as
 #' a wide-format \code{data.frame}, which will
 #' correspond to the \code{data} argument and generating a \code{data.frame}
-#' that will serve as the codebook, \code{cb}.
-#' \code{cb} must contain at least three
-#' columns whose column names are specified in the \code{cb_var_col},
-#' \code{cb_val_old}, and \code{cb_val_new} arguments of this function.
-#' \code{cb_var_col} corresponds to a column within \code{cb}
+#' that will serve as the codebook, \code{codebook}.
+#' \code{codebook} must contain at least three
+#' columns whose column names are specified in the \code{variable},
+#' \code{from}, and \code{to} arguments of this function.
+#' \code{variable} corresponds to a column within \code{codebook}
 #' that contains the names of variables to be edited. These variables will in
 #' turn correspond to column names within \code{data}.
-#' \code{cb_val_old} will specify
-#' the name of a column in \code{cb} that contains old values within \code{data}
-#' that may subsequently be recoded. \code{cb_val_old} corresponds to a column
-#' in \code{cb} that contains new value for each old value.
+#' \code{from} will specify
+#' the name of a column in \code{codebook} that contains old values within \code{data}
+#' that may subsequently be recoded. \code{from} corresponds to a column
+#' in \code{codebook} that contains new value for each old value.
 #'
 #'@param data a \code{data.frame} in wide-format such that each row
 #'corresponds to a single participant and each column corresponds to a
 #'single variable.
-#'@param cb a \code{data.frame} containing at least one column
-#',\code{cb_var_col}, corresponding to
+#'@param codebook a \code{data.frame} containing at least one column
+#',\code{variable}, corresponding to
 #'variable names (column names) within \code{data},
-#'one column, \code{cb_val_old}, corresponding to old values
+#'one column, \code{from}, corresponding to old values
 #'within \code{data} that will be replaced,
-#'and one column, \code{cb_val_new}, corresponding to new values that will be
+#'and one column, \code{to}, corresponding to new values that will be
 #'used to replace the old.
-#'@param cb_var_col vector of length 1 containing the column name
-#'within \code{cb} housing variable names within \code{data}
-#'@param cb_val_old vector of length 1 containing the column name
-#'within \code{cb} housing old values from \code{data}
-#'@param cb_val_new vector of length 1 containing the column name
-#'within \code{cb} housing new values that will be used to substitute
+#'@param variable vector of length 1 containing the column name
+#'within \code{codebook} housing variable names within \code{data}
+#'@param from vector of length 1 containing the column name
+#'within \code{codebook} housing old values from \code{data}
+#'@param to vector of length 1 containing the column name
+#'within \code{codebook} housing new values that will be used to substitute
 #'as substitutes for current values within \code{data}
-#'#'@param cb_level_idx vector of length 1 containing the column name
-#'within \code{cb} housing values that will be used to assign the order
+#'#'@param factor_levels vector of length 1 containing the column name
+#'within \code{codebook} housing values that will be used to assign the order
 #'of factor levels within recoded values of \code{data}
 #'@return A \code{data.frame} similar to \code{data}, except that
-#'specified values will have been recoded based on \code{cb}
+#'specified values will have been recoded based on \code{codebook}
 #'@export
 #'@examples
-#'cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
-#'                 cb_val_old = c("0", "1", "0", "1"),
-#'                 cb_val_new = c("no", "yes", "no", "yes"),
+#'codebook <- data.frame(variable = c("x", "x", "y", "y"),
+#'                 from = c("0", "1", "0", "1"),
+#'                 to = c("no", "yes", "no", "yes"),
 #'                 stringsAsFactors = FALSE)
 #'data <- data.frame(PID = 1:4,
 #'                   x = c("0", "1", "1", "0"),
 #'                   y = c("1", "1", "0", "0"),
 #'                   stringsAsFactors = FALSE)
-#'out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+#'out <- rc_codebook(data, codebook, "variable", "from", "to")
 #'out
-rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
-                        cb_level_idx = NULL) {
+rc_codebook <- function(data, codebook, variable, from, to,
+                        factor_levels = NULL) {
 
     # ==========================================================
     # Convert arguments
     # ==========================================================
-    cb_var_col <- as.character(cb_var_col)
-    cb_val_old <- as.character(cb_val_old)
-    cb_val_new <- as.character(cb_val_new)
-    if (!is.null(cb_level_idx)) cb_level_idx <- as.character(cb_level_idx)
+    variable <- as.character(variable)
+    from <- as.character(from)
+    to <- as.character(to)
+    if (!is.null(factor_levels)) factor_levels <- as.character(factor_levels)
 
     # ----------------------------------------------------------------
     # Check for problems in function setup and display an appropriate
@@ -137,66 +137,66 @@ rc_codebook <- function(data, cb, cb_var_col, cb_val_old, cb_val_new,
 
     # Check that arguments are of appropriate class and length
     stopifnot(is.data.frame(data))
-    stopifnot(is.data.frame(cb))
-    stopifnot(length(cb_var_col) == 1)
-    stopifnot(length(cb_val_old) == 1)
-    stopifnot(length(cb_val_new) == 1)
+    stopifnot(is.data.frame(codebook))
+    stopifnot(length(variable) == 1)
+    stopifnot(length(from) == 1)
+    stopifnot(length(to) == 1)
 
     # Checks that 1) each new old value in the codebook is mapped to exactly
     # one new value, 2) there are no missing values in the codebook, 3)
-    # makes sure that cb_* arguments are contained as
+    # makes sure that codebook_* arguments are contained as
     # columns within the codebook
-    audit_codebook(cb, cb_var_col, cb_val_old, cb_val_new)
+    audit_codebook(codebook, variable, from, to)
 
     # Check that vars in codebooks are contained within the dataset
     # and remove those that aren't
-    vars_in_codebook <- cb[, cb_var_col]
+    vars_in_codebook <- codebook[, variable]
     idx <- vars_in_codebook %in% colnames(data)
     if (!all(idx)) {
-        warning(paste0("The following values from the column 'cb_var_col' in ",
-                       "'cb' were not contained as columns in 'data': ",
+        warning(paste0("The following values from the column 'variable' in ",
+                       "'codebook' were not contained as columns in 'data': ",
                        paste(unique(vars_in_codebook[!idx]), collapse = ", ")))
 
-        cb <- cb[idx, ]
+        codebook <- codebook[idx, ]
     }
 
     # ===============================================================
 
     # Loop through unique variable names
-    for (cb_var in unique(cb[, cb_var_col])) {
+    for (codebook_var in unique(codebook[, variable])) {
 
         # Create a subset of the codebook that pertains only to one variable
-        cb_sub <- cb[cb[, cb_var_col] == cb_var, ]
+        codebook_sub <- codebook[codebook[, variable] == codebook_var, ]
 
         # Change class of column in dataset to character
-        data[, cb_var] <- as.character(data[, cb_var])
+        data[, codebook_var] <- as.character(data[, codebook_var])
 
         # Give warning if any values in data are not contained as values in
-        # the 'from' column of cb_sub
-        idx <- (data[, cb_var] %in% cb_sub[, cb_val_old]) |
-            is.na(data[, cb_var])
+        # the 'from' column of codebook_sub
+        idx <- (data[, codebook_var] %in% codebook_sub[, from]) |
+            is.na(data[, codebook_var])
         if (!all(idx)) {
-            warning(paste0("The following values within column '", cb_var,
-                           "' of data were not contained in the 'cb_val_old' ",
-                           "column of 'cb': ",
-                           paste(unique(data[!idx, cb_var]), collapse = "; ")))
+            warning(paste0("The following values within column '", codebook_var,
+                           "' of data were not contained in the 'from' ",
+                           "column of 'codebook': ",
+                           paste(unique(data[!idx, codebook_var]), collapse = "; ")))
         }
 
-        if (is.null(cb_level_idx)) {
-            data[, cb_var] <- recode(x = data[, cb_var],
-                                     from = cb_sub[, cb_val_old],
-                                     to = cb_sub[, cb_val_new],
+        if (is.null(factor_levels)) {
+            data[, codebook_var] <- rc_char(x = data[, codebook_var],
+                                     from = codebook_sub[, from],
+                                     to = codebook_sub[, to],
                                      warn = FALSE)
-        } else if(all(is.na(cb_sub[, cb_level_idx]))) {
-            data[, cb_var] <- recode(x = data[, cb_var],
-                                     from = cb_sub[, cb_val_old],
-                                     to = cb_sub[, cb_val_new],
+        } else if(all(is.na(codebook_sub[, factor_levels]))) {
+            data[, codebook_var] <- rc_char(x = data[, codebook_var],
+                                     from = codebook_sub[, from],
+                                     to = codebook_sub[, to],
                                      warn = FALSE)
         } else {
-            data[, cb_var] <- rc_factor(x = data[, cb_var],
-                                        from = cb_sub[, cb_val_old],
-                                        to = cb_sub[, cb_val_new],
-                                        level_idx = cb_sub[, cb_level_idx])
+            data[, codebook_var] <- rc_factor(x = data[, codebook_var],
+                                        from = codebook_sub[, from],
+                                        to = codebook_sub[, to],
+                                        level_idx = codebook_sub[, factor_levels])
         }
     }
     return(data)

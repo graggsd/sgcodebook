@@ -32,5 +32,5 @@ x <- as.character(1:10)
 from <- as.character(1:10)
 to <- letters[1:10]
 level_idx <- rev(1:10)
-recode(x, from, to, level_idx)
+rc_char(x, from, to, level_idx)
 }

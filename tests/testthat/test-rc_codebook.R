@@ -3,9 +3,9 @@ context("rc_codebook")
 # ----------------------------------------------------------
 # Some templates to work with
 # ----------------------------------------------------------
-cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
-                 cb_val_old = c("0", "1", "0", "1"),
-                 cb_val_new = c("no", "yes", "no", "yes"),
+codebook <- data.frame(variable = c("x", "x", "y", "y"),
+                 from = c("0", "1", "0", "1"),
+                 to = c("no", "yes", "no", "yes"),
                  stringsAsFactors = FALSE)
 
 data <- data.frame(PID = 1:4,
@@ -19,7 +19,7 @@ expected_out <- data.frame(
     y = c("yes", "yes", "no", "no"),
     stringsAsFactors = FALSE
 )
-out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+out <- rc_codebook(data, codebook, "variable", "from", "to")
 
 # ============================================================
 
@@ -41,15 +41,15 @@ test_that("works with NA values embedded in 'data'", {
                                x = c("no", "yes", NA, "no"),
                                y = c(NA, "yes", "no", "no"),
                                stringsAsFactors = FALSE)
-    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+    out <- rc_codebook(data, codebook, "variable", "from", "to")
     expect_equal(out, expected_out)
 
 })
 
-test_that("assigns NA values when cb_val_new is missing", {
-    cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
-                     cb_val_old = c("0", "1", "0", "1"),
-                     cb_val_new = c(NA, "yes", "no", "yes"),
+test_that("assigns NA values when to is missing", {
+    codebook <- data.frame(variable = c("x", "x", "y", "y"),
+                     from = c("0", "1", "0", "1"),
+                     to = c(NA, "yes", "no", "yes"),
                      stringsAsFactors = FALSE)
     expected_out <- data.frame(
         PID = 1:4,
@@ -57,14 +57,14 @@ test_that("assigns NA values when cb_val_new is missing", {
         y = c("yes", "yes", "no", "no"),
         stringsAsFactors = FALSE
     )
-    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+    out <- rc_codebook(data, codebook, "variable", "from", "to")
     expect_equal(out, expected_out)
 })
 
 test_that("works when combining variables", {
-    cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
-                     cb_val_old = c("0", "1", "0", "1"),
-                     cb_val_new = c("no", "no", "no", "yes"),
+    codebook <- data.frame(variable = c("x", "x", "y", "y"),
+                     from = c("0", "1", "0", "1"),
+                     to = c("no", "no", "no", "yes"),
                      stringsAsFactors = FALSE)
     expected_out <- data.frame(
         PID = 1:4,
@@ -72,7 +72,7 @@ test_that("works when combining variables", {
         y = c("yes", "yes", "no", "no"),
         stringsAsFactors = FALSE
     )
-    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+    out <- rc_codebook(data, codebook, "variable", "from", "to")
     expect_equal(out, expected_out)
 })
 
@@ -84,10 +84,10 @@ data <- data.frame(PID = 1:6,
                    x = as.character(rep(1:3, 2)),
                    y = as.character(rep(1:3, 2)),
                    stringsAsFactors = FALSE)
-cb <- data.frame(cb_var_col = c("x", "x", "x", "y", "y", "y"),
-                 cb_val_old = c("1", "2", "3", "1", "2", "3"),
-                 cb_val_new = c("A", "B", "C", "X", "Y", "Z"),
-                 cb_level_idx = c(1, 2, 3, 1, 2, 3),
+codebook <- data.frame(variable = c("x", "x", "x", "y", "y", "y"),
+                 from = c("1", "2", "3", "1", "2", "3"),
+                 to = c("A", "B", "C", "X", "Y", "Z"),
+                 factor_levels = c(1, 2, 3, 1, 2, 3),
                  stringsAsFactors = FALSE)
 expected_out <- data.frame(
     PID = 1:6,
@@ -97,18 +97,18 @@ expected_out <- data.frame(
                levels = c("X", "Y", "Z")),
     stringsAsFactors = FALSE
 )
-out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
-                   cb_level_idx = "cb_level_idx")
+out <- rc_codebook(data, codebook, "variable", "from", "to",
+                   factor_levels = "factor_levels")
 
 test_that("works as expected with factors", {
     # Test the baseline above
     expect_equal(out, expected_out)
 
     # reverse order of factors
-    cb <- data.frame(cb_var_col = c("x", "x", "x", "y", "y", "y"),
-                     cb_val_old = c("1", "2", "3", "1", "2", "3"),
-                     cb_val_new = c("A", "B", "C", "X", "Y", "Z"),
-                     cb_level_idx = c(1, 2, 3, 3, 2, 1),
+    codebook <- data.frame(variable = c("x", "x", "x", "y", "y", "y"),
+                     from = c("1", "2", "3", "1", "2", "3"),
+                     to = c("A", "B", "C", "X", "Y", "Z"),
+                     factor_levels = c(1, 2, 3, 3, 2, 1),
                      stringsAsFactors = FALSE)
     expected_out <- data.frame(
         PID = 1:6,
@@ -118,18 +118,18 @@ test_that("works as expected with factors", {
                    levels = c("Z", "Y", "X")),
         stringsAsFactors = FALSE
     )
-    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
-                       cb_level_idx = "cb_level_idx")
+    out <- rc_codebook(data, codebook, "variable", "from", "to",
+                       factor_levels = "factor_levels")
     expect_equal(out, expected_out)
 
 })
 
 test_that("can combine values when generating factors", {
     # reverse order of factors
-    cb <- data.frame(cb_var_col = c("x", "x", "x", "y", "y", "y"),
-                     cb_val_old = c("1", "2", "3", "1", "2", "3"),
-                     cb_val_new = c("A", "B", "B", "X", "Y", "Z"),
-                     cb_level_idx = c(1, 2, 2, 3, 2, 1),
+    codebook <- data.frame(variable = c("x", "x", "x", "y", "y", "y"),
+                     from = c("1", "2", "3", "1", "2", "3"),
+                     to = c("A", "B", "B", "X", "Y", "Z"),
+                     factor_levels = c(1, 2, 2, 3, 2, 1),
                      stringsAsFactors = FALSE)
     expected_out <- data.frame(
         PID = 1:6,
@@ -139,8 +139,8 @@ test_that("can combine values when generating factors", {
                    levels = c("Z", "Y", "X")),
         stringsAsFactors = FALSE
     )
-    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
-                       cb_level_idx = "cb_level_idx")
+    out <- rc_codebook(data, codebook, "variable", "from", "to",
+                       factor_levels = "factor_levels")
     expect_equal(out, expected_out)
 })
 
@@ -154,16 +154,16 @@ test_that("works with factors and NA values in x", {
                    levels = c("X", "Y", "Z")),
         stringsAsFactors = FALSE
     )
-    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
-                       cb_level_idx = "cb_level_idx")
+    out <- rc_codebook(data, codebook, "variable", "from", "to",
+                       factor_levels = "factor_levels")
     expect_equal(out, expected_out)
 })
 
-test_that("works with factors matching NA values in 'cb_val_new' and 'cb_level_idx'", {
-    cb <- data.frame(cb_var_col = c("x", "x", "x", "y", "y", "y"),
-                     cb_val_old = c("1", "2", "3", "1", "2", "3"),
-                     cb_val_new = c(NA, "B", "C", "X", "Y", "Z"),
-                     cb_level_idx = c(NA, 2, 3, 1, 2, 3),
+test_that("works with factors matching NA values in 'to' and 'factor_levels'", {
+    codebook <- data.frame(variable = c("x", "x", "x", "y", "y", "y"),
+                     from = c("1", "2", "3", "1", "2", "3"),
+                     to = c(NA, "B", "C", "X", "Y", "Z"),
+                     factor_levels = c(NA, 2, 3, 1, 2, 3),
                      stringsAsFactors = FALSE)
     expected_out <- data.frame(
         PID = 1:6,
@@ -173,8 +173,8 @@ test_that("works with factors matching NA values in 'cb_val_new' and 'cb_level_i
                    levels = c("X", "Y", "Z")),
         stringsAsFactors = FALSE
     )
-    out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new",
-                       cb_level_idx = "cb_level_idx")
+    out <- rc_codebook(data, codebook, "variable", "from", "to",
+                       factor_levels = "factor_levels")
     expect_equal(out, expected_out)
 })
 
@@ -182,9 +182,9 @@ test_that("works with factors matching NA values in 'cb_val_new' and 'cb_level_i
 # Errors and warnings
 # ==========================================================
 
-cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
-                 cb_val_old = c("0", "1", "0", "1"),
-                 cb_val_new = c("no", "yes", "no", "yes"),
+codebook <- data.frame(variable = c("x", "x", "y", "y"),
+                 from = c("0", "1", "0", "1"),
+                 to = c("no", "yes", "no", "yes"),
                  stringsAsFactors = FALSE)
 
 data <- data.frame(PID = 1:4,
@@ -206,27 +206,27 @@ test_that("identifies when there are unaccounted values in data", {
     exo[1, "x"] <- "2"
     expect_equal(
         suppressWarnings(
-            rc_codebook(dat, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+            rc_codebook(dat, codebook, "variable", "from", "to")
         ),
         exo
     )
     expect_warning(
-        rc_codebook(dat, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+        rc_codebook(dat, codebook, "variable", "from", "to")
         )
 
 })
 
-test_that("identifies variables in cb that are not contained in data", {
+test_that("identifies variables in codebook that are not contained in data", {
 
-    cb_2 <- rbind(cb, c("z", "0", "no"))
+    codebook_2 <- rbind(codebook, c("z", "0", "no"))
     expect_equal(
         suppressWarnings(
-            rc_codebook(data, cb_2, "cb_var_col", "cb_val_old", "cb_val_new")
+            rc_codebook(data, codebook_2, "variable", "from", "to")
         ),
         expected_out
     )
     expect_warning(
-        rc_codebook(data, cb_2, "cb_var_col", "cb_val_old", "cb_val_new")
+        rc_codebook(data, codebook_2, "variable", "from", "to")
     )
 
 })

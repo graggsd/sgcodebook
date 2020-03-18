@@ -9,7 +9,7 @@
 #' Otherwise, the lengths of \code{from} and \code{to} must be equal, and there
 #' can be no duplicated values in \code{from}.
 #'
-#' Note that when anticipating output of \code{recode}, this function
+#' Note that when anticipating output of \code{rc_char}, this function
 #' automatically converts all input arguments to character vectors in the
 #' first step.
 #'
@@ -21,7 +21,7 @@
 #' \code{from} will be converted to
 #' @param warn If 'TRUE', a warning will be generated when values in 'x'
 #' are not contained in 'from
-#' @param default_NA If 'TRUE', \code{recode} will convert values from \code{x}
+#' @param default_NA If 'TRUE', \code{rc_char} will convert values from \code{x}
 #' not in \code{from} to \code{NA}
 #' @return A character vector, derived from \code{x}, with 0 or more values
 #' substituted for new ones
@@ -30,8 +30,8 @@
 #' x <- as.character(1:10)
 #' from <- as.character(1:10)
 #' to <- letters[1:10]
-#' recode(x, from, to)
-recode <- function(x, from, to, warn = TRUE, default_NA = FALSE) {
+#' rc_char(x, from, to)
+rc_char <- function(x, from, to, warn = TRUE, default_NA = FALSE) {
 
     # Input coercion ----------------------------------------
     x <- as.character(x)

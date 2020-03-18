@@ -4,37 +4,37 @@
 \alias{rc_codebook}
 \title{Recode values within a wide dataset}
 \usage{
-rc_codebook(data, cb, cb_var_col, cb_val_old, cb_val_new, cb_level_idx = NULL)
+rc_codebook(data, codebook, variable, from, to, factor_levels = NULL)
 }
 \arguments{
 \item{data}{a \code{data.frame} in wide-format such that each row
 corresponds to a single participant and each column corresponds to a
 single variable.}
 
-\item{cb}{a \code{data.frame} containing at least one column
-,\code{cb_var_col}, corresponding to
+\item{codebook}{a \code{data.frame} containing at least one column
+,\code{variable}, corresponding to
 variable names (column names) within \code{data},
-one column, \code{cb_val_old}, corresponding to old values
+one column, \code{from}, corresponding to old values
 within \code{data} that will be replaced,
-and one column, \code{cb_val_new}, corresponding to new values that will be
+and one column, \code{to}, corresponding to new values that will be
 used to replace the old.}
 
-\item{cb_var_col}{vector of length 1 containing the column name
-within \code{cb} housing variable names within \code{data}}
+\item{variable}{vector of length 1 containing the column name
+within \code{codebook} housing variable names within \code{data}}
 
-\item{cb_val_old}{vector of length 1 containing the column name
-within \code{cb} housing old values from \code{data}}
+\item{from}{vector of length 1 containing the column name
+within \code{codebook} housing old values from \code{data}}
 
-\item{cb_val_new}{vector of length 1 containing the column name
-within \code{cb} housing new values that will be used to substitute
+\item{to}{vector of length 1 containing the column name
+within \code{codebook} housing new values that will be used to substitute
 as substitutes for current values within \code{data}
-#'@param cb_level_idx vector of length 1 containing the column name
-within \code{cb} housing values that will be used to assign the order
+#'@param factor_levels vector of length 1 containing the column name
+within \code{codebook} housing values that will be used to assign the order
 of factor levels within recoded values of \code{data}}
 }
 \value{
 A \code{data.frame} similar to \code{data}, except that
-specified values will have been recoded based on \code{cb}
+specified values will have been recoded based on \code{codebook}
 }
 \description{
 Function to recode values within columns of a dataset using a custom
@@ -53,27 +53,27 @@ variable coding schemes throughout the analysis.
 Preliminary steps include importing the dataset as
 a wide-format \code{data.frame}, which will
 correspond to the \code{data} argument and generating a \code{data.frame}
-that will serve as the codebook, \code{cb}.
-\code{cb} must contain at least three
-columns whose column names are specified in the \code{cb_var_col},
-\code{cb_val_old}, and \code{cb_val_new} arguments of this function.
-\code{cb_var_col} corresponds to a column within \code{cb}
+that will serve as the codebook, \code{codebook}.
+\code{codebook} must contain at least three
+columns whose column names are specified in the \code{variable},
+\code{from}, and \code{to} arguments of this function.
+\code{variable} corresponds to a column within \code{codebook}
 that contains the names of variables to be edited. These variables will in
 turn correspond to column names within \code{data}.
-\code{cb_val_old} will specify
-the name of a column in \code{cb} that contains old values within \code{data}
-that may subsequently be recoded. \code{cb_val_old} corresponds to a column
-in \code{cb} that contains new value for each old value.
+\code{from} will specify
+the name of a column in \code{codebook} that contains old values within \code{data}
+that may subsequently be recoded. \code{from} corresponds to a column
+in \code{codebook} that contains new value for each old value.
 }
 \examples{
-cb <- data.frame(cb_var_col = c("x", "x", "y", "y"),
-                cb_val_old = c("0", "1", "0", "1"),
-                cb_val_new = c("no", "yes", "no", "yes"),
+codebook <- data.frame(variable = c("x", "x", "y", "y"),
+                from = c("0", "1", "0", "1"),
+                to = c("no", "yes", "no", "yes"),
                 stringsAsFactors = FALSE)
 data <- data.frame(PID = 1:4,
                   x = c("0", "1", "1", "0"),
                   y = c("1", "1", "0", "0"),
                   stringsAsFactors = FALSE)
-out <- rc_codebook(data, cb, "cb_var_col", "cb_val_old", "cb_val_new")
+out <- rc_codebook(data, codebook, "variable", "from", "to")
 out
 }
