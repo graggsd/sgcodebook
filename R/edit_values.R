@@ -1,6 +1,6 @@
 #' @export
 edit_values <- function(data,
-                        codebook,
+                        edit_cb,
                         id = "id",
                         variable = "variable",
                         from = "from",
@@ -9,45 +9,45 @@ edit_values <- function(data,
     args <- c(id, variable, from, to)
     # TODO add documentation for edit_values
     # TODO add error checking for arguments of edit_values
-    # Check that arguments are colnames in codebook
-    stopifnot(all(args %in% colnames(codebook)))
+    # Check that arguments are colnames in edit_cb
+    stopifnot(all(args %in% colnames(edit_cb)))
     stopifnot(id %in% colnames(data))
 
     # Filter out values that are not contained within data and present warnings
     # for these cases
-    id_idx <- codebook[, id] %in% data[, id]
+    id_idx <- edit_cb[, id] %in% data[, id]
     if (any(!id_idx)) {
-        ids <- codebook[!id_idx, id]
+        ids <- edit_cb[!id_idx, id]
         w_1 <-
-            paste0("The following identifiers specified in codebook are not ",
+            paste0("The following identifiers specified in edit_cb are not ",
                    "contained within column ", id, " of data: ",
                    paste(ids, collapse = ", "))
         warning(w_1)
     }
-    var_idx <- codebook[, variable] %in% colnames(data)
+    var_idx <- edit_cb[, variable] %in% colnames(data)
     if (any(!var_idx)) {
-        vars <- codebook[!var_idx, var]
+        vars <- edit_cb[!var_idx, var]
         w_2 <-
-            paste0("The following column names specified in codebook column ",
+            paste0("The following column names specified in edit_cb column ",
                    variable, "are not contained as columns in data: ",
                    paste(vars, collapse = ", "))
         warning(w_2)
     }
-    codebook <- codebook[(id_idx & var_idx), ]
+    edit_cb <- edit_cb[(id_idx & var_idx), ]
 
-    for (i in 1:nrow(codebook)) {
-        dat_row_idx <- data[, id] == codebook[i, id]
-        dat_col_idx <- colnames(data) == codebook[i, variable]
+    for (i in 1:nrow(edit_cb)) {
+        dat_row_idx <- data[, id] == edit_cb[i, id]
+        dat_col_idx <- colnames(data) == edit_cb[i, variable]
         # Check that data value is as expected
-        if (data[dat_row_idx, dat_col_idx] != codebook[i, from]) {
-            w_3 <- paste0("For observation ", codebook[i, id], " in data, ",
-                          codebook[i, variable], " is equal to ",
+        if (data[dat_row_idx, dat_col_idx] != edit_cb[i, from]) {
+            w_3 <- paste0("For observation ", edit_cb[i, id], " in data, ",
+                          edit_cb[i, variable], " is equal to ",
                           data[dat_row_idx, dat_col_idx], ", but is listed ",
-                          "as ", codebook[i, from], " in codebook.")
+                          "as ", edit_cb[i, from], " in edit_cb.")
             warn(w_3)
         }
 
-        data[dat_row_idx, dat_col_idx] <- codebook[i, to]
+        data[dat_row_idx, dat_col_idx] <- edit_cb[i, to]
     }
     return(data)
 }

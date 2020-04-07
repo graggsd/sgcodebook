@@ -124,6 +124,7 @@ rc_codebook <- function(data, codebook,
                         factor_levels = NULL) {
 
     # QUESTION could this be simplified by moving some of this boolean argument stuff into a helper function
+    # TODO consider the above question and implement with other functions to make this package easier to use
 
     # ==========================================================
     # Find default columns in codebook
