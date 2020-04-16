@@ -68,6 +68,18 @@ rc_factor <- function(x, from, to, level_idx = NULL) {
         }
     }
 
+    # Check that all NA values are appropriate
+    if (!is.null(level_idx)) {
+        if (!(all(is.na(to) == is.na(level_idx)))) {
+            er <-
+                paste0("Any 'NA' values in 'to' must have paired 'NA' values ",
+                       " vectors specifying factor levels, and vice versa.")
+        }
+        # Any NA values in to must match the position of those in level_idx
+        stopifnot()
+
+    }
+
     # To avoid self-refrencing and creating unexpected behavior
     new_x <- x
 
@@ -77,6 +89,7 @@ rc_factor <- function(x, from, to, level_idx = NULL) {
     if (is.null(level_idx)) {
         new_x <- factor(new_x, levels = unique(to))
     } else {
+
         # Any NA values in to must match the position of those in level_idx
         stopifnot(all(is.na(to) == is.na(level_idx)))
 
