@@ -14,28 +14,26 @@ rc_codebook(
 )
 }
 \arguments{
-\item{data}{a \code{data.frame} in wide-format such that each row
-corresponds to a single participant and each column corresponds to a
-single variable.}
+\item{data}{a \code{data.frame} with columns containing unique variables}
 
-\item{codebook}{a \code{data.frame} containing at least one column
-,\code{variable}, corresponding to
-variable names (column names) within \code{data},
-one column, \code{from}, corresponding to old values
-within \code{data} that will be replaced,
-and one column, \code{to}, corresponding to new values that will be
-used to replace the old.}
+\item{codebook}{a \code{data.frame} containing at least three columns
+corresponding to: 1) variable (column) names within \code{data}, 2) old
+values within \code{data} to be replaced, and 3) new values that will be
+used to replace the old. Optionally contains a third column specifiying
+factor levels. Values within columns of \code{codebook} are linked by row.}
 
-\item{variable}{vector of length 1 containing the column name
-within \code{codebook} housing variable names within \code{data}}
+\item{variable}{a character string containing the column name
+within \code{codebook} housing variable names (columns) within \code{data}
+to be recoded}
 
-\item{from}{vector of length 1 containing the column name
+\item{from}{a character string containing the column name
 within \code{codebook} housing old values from \code{data}}
 
-\item{to}{vector of length 1 containing the column name
-within \code{codebook} housing new values that will be used to substitute
-as substitutes for current values within \code{data}
-#'@param factor_levels vector of length 1 containing the column name
+\item{to}{a character string containing the column name
+within \code{codebook} housing new values that will be used
+as substitutes for current values within \code{data}}
+
+\item{factor_levels}{a character string containing the column name
 within \code{codebook} housing values that will be used to assign the order
 of factor levels within recoded values of \code{data}}
 }

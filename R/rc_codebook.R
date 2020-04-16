@@ -85,24 +85,21 @@ audit_codebook <- function(codebook, variable, from, to) {
 #' that may subsequently be recoded. \code{from} corresponds to a column
 #' in \code{codebook} that contains new value for each old value.
 #'
-#'@param data a \code{data.frame} in wide-format such that each row
-#'corresponds to a single participant and each column corresponds to a
-#'single variable.
-#'@param codebook a \code{data.frame} containing at least one column
-#',\code{variable}, corresponding to
-#'variable names (column names) within \code{data},
-#'one column, \code{from}, corresponding to old values
-#'within \code{data} that will be replaced,
-#'and one column, \code{to}, corresponding to new values that will be
-#'used to replace the old.
-#'@param variable vector of length 1 containing the column name
-#'within \code{codebook} housing variable names within \code{data}
-#'@param from vector of length 1 containing the column name
+#'@param data a \code{data.frame} with columns containing unique variables
+#'@param codebook a \code{data.frame} containing at least three columns
+#'corresponding to: 1) variable (column) names within \code{data}, 2) old
+#'values within \code{data} to be replaced, and 3) new values that will be
+#'used to replace the old. Optionally contains a third column specifiying
+#'factor levels. Values within columns of \code{codebook} are linked by row.
+#'@param variable a character string containing the column name
+#'within \code{codebook} housing variable names (columns) within \code{data}
+#'to be recoded
+#'@param from a character string containing the column name
 #'within \code{codebook} housing old values from \code{data}
-#'@param to vector of length 1 containing the column name
-#'within \code{codebook} housing new values that will be used to substitute
+#'@param to a character string containing the column name
+#'within \code{codebook} housing new values that will be used
 #'as substitutes for current values within \code{data}
-#'#'@param factor_levels vector of length 1 containing the column name
+#'@param factor_levels a character string containing the column name
 #'within \code{codebook} housing values that will be used to assign the order
 #'of factor levels within recoded values of \code{data}
 #'@return A \code{data.frame} similar to \code{data}, except that
